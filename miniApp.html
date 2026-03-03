@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой первый Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .username {
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-id {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            color: #1976d2;
+            font-size: 14px;
+        }
+
+        .emoji {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🚀</div>
+        <h1>Мой первый Telegram Mini App!</h1>
+
+        <div class="user-info">
+            <div class="avatar" id="userAvatar">T</div>
+            <div class="username" id="userName">Телеграм Пользователь</div>
+            <div class="user-id" id="userId">ID: загрузка...</div>
+        </div>
+
+        <button class="btn" id="mainBtn">
+            Нажми меня!
+        </button>
+
+        <button class="btn btn-secondary" id="shareBtn">
+            Поделиться приложением
+        </button>
+
+        <div class="status" id="status">
+            Приложение загружено успешно! ✅
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (tg) {
+                // Развернуть приложение на весь экран
+                tg.expand();
+
+                // Получить данные пользователя
+                const user = tg.initDataUnsafe?.user;
+
+                if (user) {
+                    // Заполняем информацию о пользователе
+                    document.getElementById('userName').textContent =
+                        `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Аноним';
+
+                    document.getElementById('userId').textContent = `ID: ${user.id}`;
+
+                    // Первая буква имени для аватара
+                    const firstLetter = user.first_name?.charAt(0) || 'U';
+                    document.getElementById('userAvatar').textContent = firstLetter;
+
+                    // Обновляем статус
+                    document.getElementById('status').textContent =
+                        `Привет, ${user.first_name}! Приложение работает отлично! 🎉`;
+                }
+
+                // Настройка главной кнопки
+                tg.MainButton.setText("Сохранить");
+                tg.MainButton.show();
+
+                // Обработчик кнопки "Нажми меня!"
+                document.getElementById('mainBtn').addEventListener('click', function() {
+                    tg.showAlert('Отлично! Кнопка работает! 🎯');
+
+                    // Меняем текст кнопки
+                    this.textContent = 'Ещё раз нажми!';
+                    this.style.background = 'linear-gradient(45deg, #FF6B6B, #FF8E53)';
+                });
+
+                // Обработчик кнопки "Поделиться"
+                document.getElementById('shareBtn').addEventListener('click', function() {
+                    if (tg.share) {
+                        tg.share({
+                            title: 'Мой Mini App',
+                            text: 'Посмотрите мой первый Telegram Mini App!',
+                            url: window.location.href
+                        });
+                    } else {
+                        tg.showAlert('Функция "Поделиться" доступна в последних версиях Telegram');
+                    }
+                });
+
+                // Приложение готово
+                tg.ready();
+
+                console.log('Telegram WebApp инициализирован:', {
+                    version: tg.version,
+                    platform: tg.platform,
+                    user: user
+                });
+
+            } else {
+                // Режим разработки (если открыто в браузере)
+                document.getElementById('status').textContent =
+                    'Режим разработки. В Telegram будет работать ещё лучше! 🔧';
+                document.getElementById('status').style.background = '#fff3cd';
+                document.getElementById('status').style.color = '#856404';
+
+                // Тестовые данные
+                document.getElementById('userName').textContent = 'Тестовый Пользователь';
+                document.getElementById('userId').textContent = 'ID: 123456789';
+
+                // Эмулируем функционал
+                document.getElementById('mainBtn').addEventListener('click', function() {
+                    alert('В Telegram здесь будет всплывающее окно!');
+                });
+
+                document.getElementById('shareBtn').addEventListener('click', function() {
+                    alert('В Telegram здесь будет окно "Поделиться"');
+                });
+
+                console.log('Режим разработки: Telegram WebApp SDK не найден');
+            }
+        });
+
+        // Функция для отправки данных в бота
+        function sendDataToBot(data) {
+            if (tg) {
+                tg.sendData(JSON.stringify(data));
+                tg.close();
+            }
+        }
+    </script>
+</body>
+</html>
