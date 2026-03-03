@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuck Norris Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .fact-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .fact-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .user-details {
+            text-align: left;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .user-id {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(76, 175, 80, 0.2);
+            border-radius: 10px;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .fact-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🥋</div>
+            <h1>Chuck Norris Facts</h1>
+            <div class="subtitle">Powered by @Aut0_Tester_bot</div>
+        </div>
+
+        <div class="fact-card">
+            <div class="fact-text" id="fact">
+                Чак Норрис может разделить на ноль.
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <button class="btn" id="newFactBtn">
+            🥋 Новый факт
+        </button>
+
+        <button class="btn btn-secondary" id="shareBtn">
+            📤 Поделиться фактом
+        </button>
+
+        <div class="user-info" id="userInfo">
+            <div class="avatar" id="userAvatar">C</div>
+            <div class="user-details">
+                <div class="username" id="userName">Chuck Norris Fan</div>
+                <div class="user-id" id="userId">ID: loading...</div>
+            </div>
+        </div>
+
+        <div class="status" id="status">
+            Приложение готово к работе! 🚀
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+
+        // Факты о Чаке Норрисе
+        const chuckNorrisFacts = [
+            "Чак Норрис может разделить на ноль.",
+            "Чак Норрис считает до бесконечности. Дважды.",
+            "Смерть боится Чака Норриса.",
+            "Чак Норрис может выиграть в игре 'Камень, ножницы, бумага', выбрав пистолет.",
+            "Чак Норрис однажды ударил человека так сильно, что тот превратился в мем.",
+            "Чак Норрис может зажечь огонь, потирая два кусочка льда.",
+            "Чак Норрис может пройти сквозь стену. Насквозь.",
+            "Чак Норрис не спит. Он ждет.",
+            "Чак Норрис может выиграть в шахматы, сделав один ход.",
+            "Чак Норрис может приготовить омлет из яиц динозавра.",
+            "Чак Норрис однажды выиграл турнир по покеру, имея на руках джокера, 2, 7 и монополию.",
+            "Чак Норрис может дышать в космосе. Космос дышит Чаку Норрису в спину.",
+            "Чак Норрис может убить двух камней одной птицей.",
+            "Чак Норрис однажды посмотрел в зеркало, и зеркало разбилось. От страха.",
+            "Чак Норрис может пройти сквозь дверь, не открывая ее. Дверь открывается сама."
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация Telegram
+            if (tg) {
+                tg.expand(); // Развернуть на весь экран
+                tg.ready(); // Готово к работе
+
+                // Получить данные пользователя
+                const user = tg.initDataUnsafe?.user;
+
+                if (user) {
+                    // Отображаем информацию о пользователе
+                    document.getElementById('userName').textContent =
+                        `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Анонимный фанат';
+                    document.getElementById('userId').textContent = `ID: ${user.id}`;
+
+                    // Первая буква для аватара
+                    const firstLetter = user.first_name?.charAt(0) || user.username?.charAt(0) || 'C';
+                    document.getElementById('userAvatar').textContent = firstLetter.toUpperCase();
+
+                    // Обновляем статус
+                    document.getElementById('status').textContent =
+                        `Привет, ${user.first_name || 'друг'}! Готов к бою! 🥋`;
+                }
+
+                // Настройка главной кнопки
+                tg.MainButton.setText("Сохранить факт");
+                tg.MainButton.show();
+
+                // Обработчик нажатия главной кнопки
+                tg.MainButton.onClick(function() {
+                    const currentFact = document.getElementById('fact').textContent;
+                    tg.showAlert(`Факт сохранен: "${currentFact}"`);
+                });
+
+            } else {
+                // Режим разработки
+                document.getElementById('status').textContent =
+                    'Режим разработки. В Telegram будет работать ещё лучше! 🔧';
+                document.getElementById('status').style.background = 'rgba(255, 193, 7, 0.2)';
+                document.getElementById('status').style.color = '#ffc107';
+            }
+
+            // Функция получения случайного факта
+            function getRandomFact() {
+                const randomIndex = Math.floor(Math.random() * chuckNorrisFacts.length);
+                return chuckNorrisFacts[randomIndex];
+            }
+
+            // Показать новый факт
+            function showNewFact() {
+                const loading = document.getElementById('loading');
+                const factElement = document.getElementById('fact');
+
+                // Показать загрузку
+                loading.classList.add('active');
+                factElement.style.opacity = '0.5';
+
+                // Имитация загрузки
+                setTimeout(() => {
+                    const newFact = getRandomFact();
+                    factElement.textContent = newFact;
+                    factElement.style.opacity = '1';
+                    loading.classList.remove('active');
+
+                    // Обновить главную кнопку
+                    if (tg) {
+                        tg.MainButton.setText(`Сохранить: "${newFact.substring(0, 20)}..."`);
+                    }
+                }, 500);
+            }
+
+            // Кнопка нового факта
+            document.getElementById('newFactBtn').addEventListener('click', showNewFact);
+
+            // Кнопка поделиться
+            document.getElementById('shareBtn').addEventListener('click', function() {
+                const currentFact = document.getElementById('fact').textContent;
+
+                if (tg && tg.share) {
+                    tg.share({
+                        title: 'Факт о Чаке Норрисе',
+                        text: `${currentFact}\n\nПосмотрите это приложение:`,
+                        url: window.location.href
+                    });
+                } else {
+                    // Копирование в буфер обмена для браузера
+                    navigator.clipboard.writeText(currentFact).then(() => {
+                        alert('Факт скопирован в буфер обмена! 📋');
+                    }).catch(() => {
+                        prompt('Скопируйте этот факт:', currentFact);
+                    });
+                }
+            });
+
+            // Показать первый факт
+            showNewFact();
+
+            // Автоматическая смена фактов каждые 30 секунд
+            setInterval(showNewFact, 30000);
+        });
+
+        // Функция для отправки данных в бота
+        function sendToBot(data) {
+            if (tg) {
+                tg.sendData(JSON.stringify(data));
+            }
+        }
+    </script>
+</body>
+</html>
