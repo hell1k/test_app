@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой первый Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Счетчик лайков для группы</title>
     <style>
         * {
             margin: 0;
@@ -32,89 +31,206 @@
             text-align: center;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
+        .header {
+            margin-bottom: 30px;
         }
 
-        .user-info {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .avatar {
+        .logo {
             width: 80px;
             height: 80px;
-            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            background: linear-gradient(45deg, #667eea, #764ba2);
             border-radius: 50%;
             margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-size: 32px;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
+            font-size: 20px;
+        }
+
+        .user-details {
+            text-align: left;
+            flex: 1;
         }
 
         .username {
             font-weight: bold;
             color: #333;
-            font-size: 18px;
             margin-bottom: 5px;
         }
 
-        .user-id {
+        .likes-count {
+            font-size: 12px;
             color: #666;
-            font-size: 14px;
+        }
+
+        .counter {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .counter-number {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .counter-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .btn {
-            display: block;
-            width: 100%;
+            flex: 1;
             padding: 15px;
-            background: linear-gradient(45deg, #4CAF50, #8BC34A);
-            color: white;
             border: none;
             border-radius: 12px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn:hover {
+        .btn-like {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .btn-like:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
-        .btn-secondary {
+        .btn-share {
             background: #f8f9fa;
             color: #333;
             border: 2px solid #e9ecef;
         }
 
-        .btn-secondary:hover {
+        .btn-share:hover {
             background: #e9ecef;
-            transform: none;
-            box-shadow: none;
         }
 
-        .status {
+        .leaderboard {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
             margin-top: 20px;
+        }
+
+        .leaderboard h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: 10px;
-            background: #e3f2fd;
-            border-radius: 8px;
-            color: #1976d2;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
             font-size: 14px;
         }
 
+        .leaderboard-name {
+            flex: 1;
+            text-align: left;
+            padding-left: 15px;
+            color: #333;
+        }
+
+        .leaderboard-likes {
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+
         .emoji {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         @media (max-width: 480px) {
@@ -122,130 +238,161 @@
                 padding: 20px;
             }
 
-            h1 {
-                font-size: 20px;
+            .buttons {
+                flex-direction: column;
+            }
+
+            .counter-number {
+                font-size: 48px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="emoji">🚀</div>
-        <h1>Мой первый Telegram Mini App!</h1>
-
-        <div class="user-info">
-            <div class="avatar" id="userAvatar">T</div>
-            <div class="username" id="userName">Телеграм Пользователь</div>
-            <div class="user-id" id="userId">ID: загрузка...</div>
+        <div class="header">
+            <div class="logo">❤️</div>
+            <h1>Счетчик лайков</h1>
+            <div class="subtitle">Лайкайте участников вашей группы!</div>
         </div>
 
-        <button class="btn" id="mainBtn">
-            Нажми меня!
-        </button>
+        <div class="user-info">
+            <div class="avatar" id="userAvatar">U</div>
+            <div class="user-details">
+                <div class="username" id="userName">Пользователь</div>
+                <div class="likes-count">Ваши лайки: <span id="userLikes">0</span></div>
+            </div>
+        </div>
 
-        <button class="btn btn-secondary" id="shareBtn">
-            Поделиться приложением
-        </button>
+        <div class="counter">
+            <div class="counter-number" id="totalLikes">0</div>
+            <div class="counter-label">Всего лайков в группе</div>
+        </div>
 
-        <div class="status" id="status">
-            Приложение загружено успешно! ✅
+        <div class="buttons">
+            <button class="btn btn-like" id="likeBtn">
+                <span class="emoji">👍</span> Поставить лайк
+            </button>
+            <button class="btn btn-share" id="shareBtn">
+                <span class="emoji">📢</span> Поделиться
+            </button>
+        </div>
+
+        <div class="leaderboard">
+            <h3>🏆 Топ участников</h3>
+            <div id="leaderboardList">
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">1</div>
+                    <div class="leaderboard-name">Алексей</div>
+                    <div class="leaderboard-likes">42 лайка</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">2</div>
+                    <div class="leaderboard-name">Мария</div>
+                    <div class="leaderboard-likes">38 лайков</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">3</div>
+                    <div class="leaderboard-name">Иван</div>
+                    <div class="leaderboard-likes">25 лайков</div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="notification" id="notification">
+        Лайк успешно поставлен! 🎉
+    </div>
+
     <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram?.WebApp;
+        // Имитация данных пользователя Telegram
+        const telegramUser = {
+            id: 123456789,
+            firstName: "Алексей",
+            lastName: "Петров",
+            username: "alexey_petrov",
+            photoUrl: null
+        };
 
+        // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
-            if (tg) {
-                // Развернуть приложение на весь экран
-                tg.expand();
+            // Заполняем информацию о пользователе
+            document.getElementById('userName').textContent = telegramUser.firstName;
+            document.getElementById('userAvatar').textContent = telegramUser.firstName.charAt(0);
 
-                // Получить данные пользователя
-                const user = tg.initDataUnsafe?.user;
+            // Имитация данных из "базы данных"
+            let totalLikes = 127;
+            let userLikes = 15;
 
-                if (user) {
-                    // Заполняем информацию о пользователе
-                    document.getElementById('userName').textContent =
-                        `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Аноним';
+            document.getElementById('totalLikes').textContent = totalLikes;
+            document.getElementById('userLikes').textContent = userLikes;
 
-                    document.getElementById('userId').textContent = `ID: ${user.id}`;
+            // Обработчик кнопки лайка
+            document.getElementById('likeBtn').addEventListener('click', function() {
+                totalLikes++;
+                userLikes++;
 
-                    // Первая буква имени для аватара
-                    const firstLetter = user.first_name?.charAt(0) || 'U';
-                    document.getElementById('userAvatar').textContent = firstLetter;
+                document.getElementById('totalLikes').textContent = totalLikes;
+                document.getElementById('userLikes').textContent = userLikes;
 
-                    // Обновляем статус
-                    document.getElementById('status').textContent =
-                        `Привет, ${user.first_name}! Приложение работает отлично! 🎉`;
-                }
+                // Показываем уведомление
+                showNotification('Лайк успешно поставлен! 🎉');
 
-                // Настройка главной кнопки
-                tg.MainButton.setText("Сохранить");
-                tg.MainButton.show();
+                // Имитация отправки данных на сервер
+                setTimeout(() => {
+                    console.log('Лайк отправлен на сервер:', {
+                        userId: telegramUser.id,
+                        timestamp: new Date().toISOString()
+                    });
+                }, 100);
+            });
 
-                // Обработчик кнопки "Нажми меня!"
-                document.getElementById('mainBtn').addEventListener('click', function() {
-                    tg.showAlert('Отлично! Кнопка работает! 🎯');
+            // Обработчик кнопки поделиться
+            document.getElementById('shareBtn').addEventListener('click', function() {
+                // В реальном Mini App здесь будет вызов Telegram WebApp.share()
+                showNotification('Ссылка скопирована в буфер обмена! 📋');
 
-                    // Меняем текст кнопки
-                    this.textContent = 'Ещё раз нажми!';
-                    this.style.background = 'linear-gradient(45deg, #FF6B6B, #FF8E53)';
-                });
+                // Имитация копирования ссылки
+                const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Присоединяйтесь к нашему счетчику лайков!')}`;
+                console.log('Share URL:', shareUrl);
+            });
 
-                // Обработчик кнопки "Поделиться"
-                document.getElementById('shareBtn').addEventListener('click', function() {
-                    if (tg.share) {
-                        tg.share({
-                            title: 'Мой Mini App',
-                            text: 'Посмотрите мой первый Telegram Mini App!',
-                            url: window.location.href
-                        });
-                    } else {
-                        tg.showAlert('Функция "Поделиться" доступна в последних версиях Telegram');
-                    }
-                });
+            // Функция показа уведомления
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.add('show');
 
-                // Приложение готово
-                tg.ready();
-
-                console.log('Telegram WebApp инициализирован:', {
-                    version: tg.version,
-                    platform: tg.platform,
-                    user: user
-                });
-
-            } else {
-                // Режим разработки (если открыто в браузере)
-                document.getElementById('status').textContent =
-                    'Режим разработки. В Telegram будет работать ещё лучше! 🔧';
-                document.getElementById('status').style.background = '#fff3cd';
-                document.getElementById('status').style.color = '#856404';
-
-                // Тестовые данные
-                document.getElementById('userName').textContent = 'Тестовый Пользователь';
-                document.getElementById('userId').textContent = 'ID: 123456789';
-
-                // Эмулируем функционал
-                document.getElementById('mainBtn').addEventListener('click', function() {
-                    alert('В Telegram здесь будет всплывающее окно!');
-                });
-
-                document.getElementById('shareBtn').addEventListener('click', function() {
-                    alert('В Telegram здесь будет окно "Поделиться"');
-                });
-
-                console.log('Режим разработки: Telegram WebApp SDK не найден');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
             }
+
+            // Имитация обновления лидерборда
+            setInterval(() => {
+                // В реальном приложении здесь был бы запрос к серверу
+                const leaderboardItems = document.querySelectorAll('.leaderboard-likes');
+                leaderboardItems.forEach((item, index) => {
+                    const current = parseInt(item.textContent);
+                    const newValue = current + Math.floor(Math.random() * 3);
+                    item.textContent = `${newValue} лайк${getPlural(newValue)}`;
+                });
+            }, 10000); // Обновление каждые 10 секунд
+
+            function getPlural(number) {
+                const lastDigit = number % 10;
+                const lastTwoDigits = number % 100;
+
+                if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return 'ов';
+                if (lastDigit === 1) return '';
+                if (lastDigit >= 2 && lastDigit <= 4) return 'а';
+                return 'ов';
+            }
+
+            // Логирование для отладки
+            console.log('Telegram Mini App инициализирован');
+            console.log('Пользователь:', telegramUser);
         });
-
-        // Функция для отправки данных в бота
-        function sendDataToBot(data) {
-            if (tg) {
-                tg.sendData(JSON.stringify(data));
-                tg.close();
-            }
-        }
     </script>
 </body>
 </html>
